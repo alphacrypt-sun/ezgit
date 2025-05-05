@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# github-cli-menu.sh
-# A bash menu script to automate GitHub operations using GitHub CLI (gh), git, and cron
+# github-cli-menu.sh – GitHub Automation CLI
+# Version: 1.3
+# Updated: May 5, 2025
 
 clear
 
 print_menu() {
-  echo ""
   echo "🔧 GitHub CLI Project Menu"
-  echo "=========================="
+  echo "==========================="
   echo "1. Create new GitHub repo from current folder"
   echo "2. Clone existing repo"
   echo "3. Merge one folder into another"
@@ -17,21 +17,21 @@ print_menu() {
   echo "6. Exit"
 }
 
+auto_detect_url() {
+  git remote get-url origin 2>/dev/null || echo ""
+}
+
 create_repo() {
-  folder_path=$(pwd)
-  read -p "📝 Repo name: " repo_name
+  repo_name=$(basename "$PWD")
   read -p "🔒 Visibility (private/public) [private]: " visibility
   visibility=${visibility:-private}
+  echo "📦 Creating repo '$repo_name' as $visibility..."
 
-  if [ ! -d "$folder_path/.git" ]; then
-    git init
-    echo "# $repo_name" > README.md
-    git add .
-    git commit -m "Initial commit"
-  fi
+  git init -q 2>/dev/null
+  git add .
+  git commit -m "Initial commit" 2>/dev/null
 
-  gh repo create "$repo_name" --"$visibility" --source=. --remote=origin --push
-  echo "✅ Repo '$repo_name' created from $folder_path and pushed to GitHub."
+  gh repo create "$repo_name" --$visibility --source=. --remote=origin --push
 }
 
 clone_repo() {
@@ -40,65 +40,68 @@ clone_repo() {
 }
 
 merge_folders() {
-  read -p "📁 Source folder to merge from (absolute path): " source_folder
-  read -p "📁 Target folder to merge into (absolute path): " target_folder
+  read -p "📁 Source folder to merge from (absolute path): " src
+  read -p "📁 Target folder to merge into (absolute path): " tgt
 
-  if [ ! -d "$source_folder" ] || [ ! -d "$target_folder" ]; then
-    echo "❌ One or both directories not found."
+  if [[ ! -d "$src" || ! -d "$tgt" ]]; then
+    echo "❌ One or both directories not found. Use absolute paths."
     return
   fi
 
-  cp -r "$source_folder"/* "$target_folder"
-  echo "✅ Merged contents of $source_folder into $target_folder."
+  cp -r "$src"/* "$tgt"/
+  echo "✅ Merged '$src' into '$tgt'"
 }
 
-watch_and_auto_merge() {
-  read -p "📁 Watched source folder (absolute path): " source_folder
-  read -p "📁 Target folder to auto-merge into (absolute path): " target_folder
+setup_watch() {
+  read -p "📁 Watched source folder (absolute path): " src
+  read -p "📁 Target folder to auto-merge into (absolute path): " tgt
 
-  if [ ! -d "$source_folder" ] || [ ! -d "$target_folder" ]; then
+  if [[ ! -d "$src" || ! -d "$tgt" ]]; then
     echo "❌ One or both paths are invalid."
     return
   fi
 
-  cron_job="0 */24 * * * cp -r $source_folder/* $target_folder && echo \"Merged at \$(date)\" >> ~/auto-merge.log"
-  (crontab -l 2>/dev/null; echo "$cron_job") | crontab -
-  echo "✅ Auto-merge scheduled every 24 hours."
+  cronjob="0 */24 * * * cp -r $src/* $tgt/ >> ~/auto-merge.log 2>&1"
+  (crontab -l 2>/dev/null; echo "$cronjob") | crontab -
+  echo "🕒 Auto-merge scheduled every 24h."
 }
 
-update_repo() {
-  folder_path=$(pwd)
-  read -p "🌐 GitHub repo URL (e.g., https://github.com/user/repo.git): " repo_url
+push_update() {
+  repo_name=$(basename "$PWD")
+  repo_url=$(auto_detect_url)
 
-  if [ -z "$repo_url" ]; then
-    echo "❌ No GitHub repo URL provided."
+  if [[ -z "$repo_url" || "$repo_url" != https://github.com/* ]]; then
+    read -p "🌐 GitHub repo URL (e.g., https://github.com/user/repo.git): " repo_url
+  fi
+
+  if [[ -z "$repo_url" ]]; then
+    echo "❌ GitHub repo URL is required."
     return
   fi
 
-  if [ ! -d "$folder_path/.git" ]; then
-    echo "❌ This directory is not a Git repository."
-    return
-  fi
-
-  cd "$folder_path" || return
+  git init -q
   git add .
-  git commit -m "Update" || echo "ℹ️ No changes to commit."
-  git remote add origin "$repo_url" 2>/dev/null
-  git pull origin main --rebase
-  git push origin main
-  echo "✅ Local repository updated and pushed to $repo_url."
+  git commit -m "Update $(date '+%Y-%m-%d %H:%M:%S')" 2>/dev/null
+  git remote remove origin 2>/dev/null
+  git remote add origin "$repo_url"
+  git branch -M main
+  git push -u origin main
+  echo "✅ Repo '$repo_name' updated and pushed to GitHub."
 }
 
 while true; do
   print_menu
+  echo ""
   read -p "Choose an option [1-6]: " choice
+
   case $choice in
-    1) create_repo ;;
-    2) clone_repo ;;
-    3) merge_folders ;;
-    4) watch_and_auto_merge ;;
-    5) update_repo ;;
-    6) echo "👋 Goodbye!"; exit 0 ;;
-    *) echo "❌ Invalid option." ;;
+    1) create_repo;;
+    2) clone_repo;;
+    3) merge_folders;;
+    4) setup_watch;;
+    5) push_update;;
+    6) echo "👋 Exiting..."; exit 0;;
+    *) echo "❌ Invalid option. Try again.";;
   esac
+
 done
