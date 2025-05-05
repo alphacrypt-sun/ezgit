@@ -1,93 +1,83 @@
 # 📘 `github-cli-menu.sh` – GitHub Automation CLI
 
-A no-BS Bash script that simplifies daily GitHub project tasks — creating, cloning, merging, and watching repositories — all from a terminal menu. Powered by GitHub CLI (`gh`), Git, and cron.
+A no-BS Bash script that simplifies daily GitHub project tasks — creating, cloning, merging, updating, and automating — all from a terminal menu. Powered by GitHub CLI (`gh`), Git, and cron.
 
 ---
 
 ## ⚙️ Features
 
-- 📁 Create new GitHub repos directly from any local folder  
-- 🔄 Clone existing repos  
-- 🔗 Merge contents of one repo/folder into another  
-- ⏱️ Set up automated 24h watch & auto-merge between folders  
-- 💡 Clean terminal menu UI with interactive prompts  
-- 🧠 Smart fallback handling (missing remotes, empty commits, auth status, etc.)
+- 📁 **Create new GitHub repos** directly from your current working folder  
+- 🔄 **Clone** any existing repo  
+- 🔗 **Merge contents** of one local folder into another  
+- ⏱️ **Set up 24h auto-merge** with cron  
+- 📤 **Push updates** from your current folder to a GitHub repo  
+- 🧠 Smart checks for remotes, auth, repo status, and git init  
+- 💡 Clean terminal UI for fast decision-making  
 
 ---
 
 ## 🚀 Install
 
-1. **Clone or download the script**
-   ```bash
-   git clone https://github.com/alphacrypt-sun/ezgit.git
-   cd <repo-name>
-   chmod +x github-cli-menu.sh
-   ```
-
----
-
-## 🧪 Requirements
-
-- `gh` (GitHub CLI) – [Install Guide](https://cli.github.com/)  
-- `git`  
-- `cron` (for auto-merge feature)  
-- Unix-based OS (macOS, Linux, WSL, etc.)
-
----
-
-## 🖥️ Usage
-
-Run directly:
 ```bash
+git clone https://github.com/alphacrypt-sun/ezgit.git
+cd ezgit
+chmod +x github-cli-menu.sh
+
+
+🧪 Requirements
+gh (GitHub CLI) – Install Guide
+
+git
+
+cron (for auto-merge feature)
+
+Unix-based OS (macOS, Linux, WSL, etc.)
+🖥️ Usage
+Run from any terminal inside your working folder:
+
+bash
+Copy
+Edit
 ./github-cli-menu.sh
-```
+🧭 Menu Options
+sql
+Copy
+Edit
 
-Or globally (if symlinked):
-```bash
-ghmenu
-```
-
-### Menu:
-```
 🔧 GitHub CLI Project Menu
 ==========================
-1. Create new GitHub repo from folder
+1. Create new GitHub repo from current folder
 2. Clone existing repo
 3. Merge one folder into another
 4. Set up Watch & Auto-Merge (every 24h)
-5. Exit
-```
+5. Update & Push Local Repo to GitHub
+6. Exit
+📌 Behavior Notes
+Always uses your current working directory
 
----
+Handles:
 
-## 📌 Notes
+Empty or existing git repos
 
-- You do **not** need to be inside the project folder to run it
-- Accepts full or `~/`-based paths
-- Handles:
-  - Existing Git repos
-  - Auth via GitHub CLI
-  - Auto merge errors cleanly (with fallback)
-- Logs auto-merge results to `~/auto-merge.log`
+Missing remotes or setup steps
 
----
+GitHub CLI auth fallback
 
-## 🔒 Visibility Defaults
+Auto-merge logs go to: ~/auto-merge.log
 
-- New repos are created as **private** by default  
-- You can override by entering `public` during setup prompt
+🔒 Defaults
+New GitHub repos are created as private
 
----
+You can override during setup (public)
 
-## 🛠️ To-Do
+Repo name is manually entered at creation
 
-- Add a `--help` CLI flag  
-- Auto-suggest repo name from folder name  
-- Add optional `.env` support  
-- Enable GitHub topics / license templates via `gh repo edit`
+🛠️ Future Ideas
+ Auto-detect repo name from folder
 
----
+ .env support for default configs
 
-## 📄 License
+ GitHub topics or project metadata options
 
-MIT – do whatever, just don’t be a jerk about it.
+📄 License
+MIT – automate responsibly. Just don’t claim you wrote it from scratch.
