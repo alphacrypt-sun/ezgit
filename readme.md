@@ -39,7 +39,7 @@ chmod +x ezgit.sh
 
 Run from any terminal inside your working folder:
 ```bash
-./github-cli-menu.sh
+./ezgit.sh
 ```
 
 ### 🧭 Menu Options
