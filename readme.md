@@ -21,7 +21,7 @@ A no-BS Bash script that simplifies daily GitHub project tasks — creating, clo
 ```bash
 git clone https://github.com/alphacrypt-sun/ezgit.git
 cd ezgit
-chmod +x github-cli-menu.sh
+chmod +x ezgit.sh
 ```
 
 ---
