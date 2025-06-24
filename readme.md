@@ -1,52 +1,78 @@
-# 📘 `github-cli-menu.sh` – GitHub Automation CLI
+# GitHub CLI Menu – GitHub Automation Bash Script
 
-A no-BS Bash script that simplifies daily GitHub project tasks — creating, cloning, merging, updating, and automating — all from a terminal menu. Powered by GitHub CLI (`gh`), Git, and cron.
+**Version:** 1.3  
+**Updated:** May 5, 2025
 
----
-
-## ⚙️ Features
-
-- 📁 **Create new GitHub repos** directly from your current working folder (auto-detects folder name as repo name)
-- 🔄 **Clone** any existing repo  
-- 🔗 **Merge contents** of one local folder into another  
-- ⏱️ **Set up 24h auto-merge** with cron  
-- 📤 **Push updates** from your current folder to a GitHub repo  
-- 🧠 Smart checks for remotes, auth, repo status, and git init  
-- 💡 Clean terminal UI for fast decision-making  
+A simple, interactive Bash CLI tool to automate common GitHub and folder management tasks—ideal for developers who want to streamline project setup, repo management, and folder syncing on Unix-like systems.
 
 ---
 
-## 🚀 Install
+## Features
 
-```bash
-git clone https://github.com/alphacrypt-sun/ezgit.git
-cd ezgit
-chmod +x ezgit.sh
+- **Create new GitHub repo** from the current folder (with initial commit)
+- **Clone existing GitHub repo**
+- **Merge contents** from one folder into another
+- **Set up automatic folder merge** (every 24h) via cron
+- **Update & push** local repo changes to GitHub
+- Simple, menu-driven interface with emoji feedback
+
+---
+
+## Requirements
+
+- [GitHub CLI (`gh`)](https://cli.github.com/) (must be authenticated)
+- `git`
+- `cron`
+- Unix-like OS (Linux, macOS, WSL, etc.)
+- Bash shell
+
+---
+
+## Installation
+
+1. **Copy the Script**
+
+   Save the following script as `github-cli-menu.sh`:
+
+   ```bash
+   #!/bin/bash
+   # (script code here, as provided in the repo)
+   ```
+
+2. **Make Executable**
+
+   ```sh
+   chmod +x github-cli-menu.sh
+   ```
+
+3. **(Optional) Add to PATH**
+
+   For global usage, move it to a directory in your `PATH` (e.g., `/usr/local/bin`):
+
+   ```sh
+   sudo mv github-cli-menu.sh /usr/local/bin/github-cli-menu
+   ```
+
+---
+
+## Usage
+
+Simply run:
+
+```sh
+./github-cli-menu.sh
+```
+or (if installed globally):
+
+```sh
+github-cli-menu
 ```
 
----
-
-## 🧪 Requirements
-
-- `gh` (GitHub CLI) – [Install Guide](https://cli.github.com/)  
-- `git`  
-- `cron` (for auto-merge feature)  
-- Unix-based OS (macOS, Linux, WSL, etc.)
-
----
-
-## 🖥️ Usage
-
-Run from any terminal inside your working folder:
-```bash
-./ezgit.sh
-```
-
-### 🧭 Menu Options
+You'll see the menu:
 
 ```
 🔧 GitHub CLI Project Menu
-==========================
+===========================
 1. Create new GitHub repo from current folder
 2. Clone existing repo
 3. Merge one folder into another
@@ -55,48 +81,87 @@ Run from any terminal inside your working folder:
 6. Exit
 ```
 
----
-
-## 📌 Behavior Notes
-
-- Always uses your **current working directory**  
-- Handles:
-  - Empty or existing git repos
-  - Missing remotes or setup steps
-  - GitHub CLI auth fallback
-- Auto-merge logs go to: `~/auto-merge.log`
+Enter a number (1-6) and follow the prompts.
 
 ---
 
-## 🔒 Defaults
+## Menu Options Explained
 
-- New GitHub repos are created as **private**  
-- You can override during setup (`public`)  
-- Repo name is **auto-detected** from folder name
+### 1. Create new GitHub repo from current folder
+- Initializes Git, makes initial commit, and creates a new private/public repo under your GitHub account using the GitHub CLI.
+- **Requires:** Authenticated `gh` CLI.
 
----
+### 2. Clone existing repo
+- Prompts for a GitHub repo URL and clones it into the current directory.
 
-## 🛠️ Future Ideas
+### 3. Merge one folder into another
+- Prompts for source and target folder paths (absolute).
+- Copies all files from source to target.
 
-- [ ] `.env` support for default configs  
-- [ ] GitHub topics or project metadata options
+### 4. Set up Watch & Auto-Merge (every 24h)
+- Sets a cron job to copy (merge) contents from a watched folder to a target folder every 24 hours.
+- Logs output to `~/auto-merge.log`.
 
----
+### 5. Update & Push Local Repo to GitHub
+- Adds, commits, and pushes all local changes to the `main` branch of the remote repo.
+- If no remote exists, prompts for a repo URL.
 
-## 🧾 Revision Notes
-
-### v1.1 – May 5, 2025
-- Auto-detects current directory name for repo name
-- Removed prompt for local folder input
-- Cleaned up path handling for `~` and absolute usage
-- Improved error messages for GitHub URL and path mismatches
-
-### v1.0 – May 3, 2025
-- Initial release of CLI script for GitHub automation
-- Basic create, clone, merge, and cron-based sync features
+### 6. Exit
+- Quits the script.
 
 ---
 
-## 📄 License
+## Global Usage (System-wide Setup)
 
-MIT – automate responsibly. Just don’t claim you wrote it from scratch.
+To make the script globally accessible (as `github-cli-menu`):
+
+1. Move the script as root:
+   ```sh
+   sudo mv github-cli-menu.sh /usr/local/bin/github-cli-menu
+   sudo chmod +x /usr/local/bin/github-cli-menu
+   ```
+
+2. Now you can call it from anywhere:
+   ```sh
+   github-cli-menu
+   ```
+
+---
+
+## Notes & Tips
+
+- **GitHub CLI Authentication:**  
+  Make sure to run `gh auth login` before using repo creation features.
+- **Cron Permission:**  
+  Ensure your user has permission to add cron jobs. Use `crontab -l` to view or edit.
+- **Absolute Paths:**  
+  For folder operations, always use absolute paths to avoid errors.
+- **Error Handling:**  
+  The script provides feedback for invalid inputs and missing directories.
+
+---
+
+## License
+
+MIT License
+
+---
+
+## Contributors
+
+- [Your Name](https://github.com/your-github-profile)
+
+---
+
+## Troubleshooting
+
+- **gh: command not found**  
+  → [Install GitHub CLI](https://cli.github.com/manual/installation)
+- **Permission denied**  
+  → Use `chmod +x github-cli-menu.sh` to make the script executable.
+- **cron issues**
+  → Check `~/auto-merge.log` for errors or use `crontab -e` to manage scheduled jobs.
+
+---
+
+Enjoy streamlined GitHub automation from your terminal! 🚀
