@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # github-cli-menu.sh – GitHub Automation CLI
-# Version: 1.3
-# Updated: May 5, 2025
+# Version: 1.3.1
+# Updated: June 24, 2025
 
 clear
 
@@ -27,10 +27,10 @@ create_repo() {
   visibility=${visibility:-private}
   echo "📦 Creating repo '$repo_name' as $visibility..."
 
-  git init -q 2>/dev/null
+  git init -q
   git add .
-  git commit -m "Initial commit" 2>/dev/null
-
+  # Ensure at least one commit exists before pushing
+  git commit -m "Initial commit" || git commit --allow-empty -m "Initial commit"
   gh repo create "$repo_name" --$visibility --source=. --remote=origin --push
 }
 
@@ -81,7 +81,8 @@ push_update() {
 
   git init -q
   git add .
-  git commit -m "Update $(date '+%Y-%m-%d %H:%M:%S')" 2>/dev/null
+  # Ensure at least one commit exists before pushing
+  git commit -m "Update $(date '+%Y-%m-%d %H:%M:%S')" || git commit --allow-empty -m "Update $(date '+%Y-%m-%d %H:%M:%S')"
   git remote remove origin 2>/dev/null
   git remote add origin "$repo_url"
   git branch -M main
@@ -103,5 +104,4 @@ while true; do
     6) echo "👋 Exiting..."; exit 0;;
     *) echo "❌ Invalid option. Try again.";;
   esac
-
 done
