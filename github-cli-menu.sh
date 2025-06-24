@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # github-cli-menu.sh – GitHub Automation CLI
-# Version: 1.3.1
+# Version: 1.3.2
 # Updated: June 24, 2025
 
 clear
@@ -31,6 +31,8 @@ create_repo() {
   git add .
   # Ensure at least one commit exists before pushing
   git commit -m "Initial commit" || git commit --allow-empty -m "Initial commit"
+  # Remove existing origin to avoid conflicts
+  git remote remove origin 2>/dev/null
   gh repo create "$repo_name" --$visibility --source=. --remote=origin --push
 }
 
